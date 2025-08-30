@@ -19,7 +19,7 @@
     <parent>
         <groupId>org.wso2.is</groupId>
         <artifactId>identity-server-parent</artifactId>
-        <version>7.2.0-m6-SNAPSHOT</version>
+        <version>7.2.0-beta-SNAPSHOT</version>
         <relativePath>../../pom.xml</relativePath>
     </parent>
 
@@ -414,6 +414,10 @@
                                     <fileset dir="${basedir}/../p2-profile-gen/target/wso2carbon-core-${carbon.kernel.version}/dbscripts/consent/">
                                     </fileset>
                                 </copy>
+                                <copy todir="target/wso2carbon-core-${carbon.kernel.version}/dbscripts/identity/agent" overwrite="false">
+                                    <fileset dir="${basedir}/../p2-profile-gen/target/wso2carbon-core-${carbon.kernel.version}/dbscripts/identity/agent">
+                                    </fileset>
+                                </copy>
 
                                 <path id="h2.classpath">
                                     <path refid="maven.compile.classpath" />
@@ -432,6 +436,13 @@
                                         <path refid="h2.classpath" />
                                     </classpath>
                                     <fileset file="target/wso2carbon-core-${carbon.kernel.version}/dbscripts/consent/h2.sql" />
+                                </sql>
+                                <echo message="########### Create Agent Identity Database ##############" />
+                                <sql driver="org.h2.Driver" url="jdbc:h2:${basedir}/target/wso2carbon-core-${carbon.kernel.version}/repository/database/WSO2AGENTIDENTITY_DB" userid="wso2carbon" password="wso2carbon" autocommit="true" onerror="continue">
+                                    <classpath>
+                                        <path refid="h2.classpath" />
+                                    </classpath>
+                                    <fileset file="target/wso2carbon-core-${carbon.kernel.version}/dbscripts/identity/agent/h2.sql" />
                                 </sql>
                                 <echo message="##################### END ########################" />
 
@@ -471,6 +482,14 @@
                                     </fileset>
                                 </unzip>
                                 <delete file="../p2-profile-gen/target/wso2carbon-core-${carbon.kernel.version}/repository/deployment/server/webapps/authenticationendpoint.war" />
+
+                                <!-- Explode the accounts.war -->
+                                <unzip dest="../p2-profile-gen/target/wso2carbon-core-${carbon.kernel.version}/repository/deployment/server/webapps/accounts">
+                                    <fileset dir="../p2-profile-gen/target/wso2carbon-core-${carbon.kernel.version}/repository/deployment/server/webapps">
+                                        <include name="accounts.war" />
+                                    </fileset>
+                                </unzip>
+                                <delete file="../p2-profile-gen/target/wso2carbon-core-${carbon.kernel.version}/repository/deployment/server/webapps/accounts.war" />
 
                                 <!-- Explode the accountrecoveryendpoint.war -->
                                 <unzip dest="../p2-profile-gen/target/wso2carbon-core-${carbon.kernel.version}/repository/deployment/server/webapps/accountrecoveryendpoint">

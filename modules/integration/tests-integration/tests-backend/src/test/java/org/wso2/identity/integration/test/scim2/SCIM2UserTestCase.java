@@ -48,7 +48,6 @@ import java.io.IOException;
 
 import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertNotNull;
-import static org.testng.Assert.assertTrue;
 import static org.testng.Assert.fail;
 import static org.wso2.identity.integration.test.scim2.SCIM2BaseTestCase.EMAILS_ATTRIBUTE;
 import static org.wso2.identity.integration.test.scim2.SCIM2BaseTestCase.EMAIL_ADDRESSES_ATTRIBUTE;
@@ -91,7 +90,6 @@ public class SCIM2UserTestCase extends ISIntegrationTest {
 
     private CloseableHttpClient client;
 
-
     private static final String EQUAL = "+Eq+";
     private static final String STARTWITH = "+Sw+";
     private static final String ENDWITH = "+Ew+";
@@ -99,6 +97,7 @@ public class SCIM2UserTestCase extends ISIntegrationTest {
 
     @BeforeClass(alwaysRun = true)
     public void testInit() throws Exception {
+
         super.init();
         client = HttpClients.createDefault();
     }
@@ -121,6 +120,7 @@ public class SCIM2UserTestCase extends ISIntegrationTest {
 
     @DataProvider(name = "SCIM2UserConfigProvider")
     public static Object[][] sCIM2UserConfigProvider() {
+
         return new Object[][]{
                 {TestUserMode.SUPER_TENANT_ADMIN},
                 {TestUserMode.TENANT_ADMIN}
@@ -129,6 +129,7 @@ public class SCIM2UserTestCase extends ISIntegrationTest {
 
     @Test
     public void testCreateUser() throws Exception {
+
         HttpPost request = new HttpPost(getPath());
         request.addHeader(HttpHeaders.AUTHORIZATION, getAuthzHeader());
         request.addHeader(HttpHeaders.CONTENT_TYPE, "application/json");
@@ -251,6 +252,7 @@ public class SCIM2UserTestCase extends ISIntegrationTest {
 
     @Test
     public void testAddUserFailure() throws Exception {
+
         HttpPost request = new HttpPost(getPath());
         request.addHeader(HttpHeaders.AUTHORIZATION, getAuthzHeader());
         request.addHeader(HttpHeaders.CONTENT_TYPE, "application/json");
@@ -275,7 +277,7 @@ public class SCIM2UserTestCase extends ISIntegrationTest {
 
         LOG.info("Response of testAddUserFailure method:" + responseObj.toString());
 
-        JSONArray schemasArray = (JSONArray)((JSONObject) responseObj).get("schemas");
+        JSONArray schemasArray = (JSONArray) ((JSONObject) responseObj).get("schemas");
         Assert.assertNotNull(schemasArray);
         Assert.assertEquals(schemasArray.size(), 1);
         Assert.assertEquals(schemasArray.get(0).toString(), ERROR_SCHEMA);
@@ -283,6 +285,7 @@ public class SCIM2UserTestCase extends ISIntegrationTest {
 
     @Test(dependsOnMethods = "testCreateUser")
     public void testGetUser() throws Exception {
+
         String userResourcePath = getPath() + "/" + userId;
         HttpGet request = new HttpGet(userResourcePath);
         request.addHeader(HttpHeaders.AUTHORIZATION, getAuthzHeader());
@@ -313,6 +316,7 @@ public class SCIM2UserTestCase extends ISIntegrationTest {
     }
 
     private void validateFilteredUser(String attributeName, String operator, String attributeValue) throws IOException {
+
         String userResourcePath = getPath() + "?filter=" + attributeName + operator + attributeValue;
         HttpGet request = new HttpGet(userResourcePath);
         request.addHeader(HttpHeaders.AUTHORIZATION, getAuthzHeader());
@@ -354,7 +358,7 @@ public class SCIM2UserTestCase extends ISIntegrationTest {
                 .get("Resources")).get(0));
         JSONArray emailsArray = (JSONArray) ((JSONObject) userResources.get(USER_SYSTEM_SCHEMA)).get(attributeName);
 
-        for (Object email: emailsArray) {
+        for (Object email : emailsArray) {
             if (email.equals(attributeValue)) {
                 return;
             }
@@ -364,6 +368,7 @@ public class SCIM2UserTestCase extends ISIntegrationTest {
 
     @Test(dependsOnMethods = "testFilterUser")
     public void testDeleteUser() throws Exception {
+
         String userResourcePath = getPath() + "/" + userId;
         HttpDelete request = new HttpDelete(userResourcePath);
         request.addHeader(HttpHeaders.AUTHORIZATION, getAuthzHeader());
@@ -418,6 +423,7 @@ public class SCIM2UserTestCase extends ISIntegrationTest {
     }
 
     private String getPath() {
+
         if (tenant.equals(MultitenantConstants.SUPER_TENANT_DOMAIN_NAME)) {
             return SERVER_URL + SCIM2_USERS_ENDPOINT;
         } else {
@@ -426,6 +432,7 @@ public class SCIM2UserTestCase extends ISIntegrationTest {
     }
 
     private String getAuthzHeader() {
+
         return "Basic " + Base64.encodeBase64String((adminUsername + ":" + adminPassword).getBytes()).trim();
     }
 }
